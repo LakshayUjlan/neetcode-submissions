@@ -1,0 +1,47 @@
+class Solution:
+    def pacificAtlantic(self, heights):
+        ROWS, COLS = len(heights), len(heights[0])
+
+        pacific = set()
+        atlantic = set()
+
+        directions = [(1,0), (-1,0), (0,1), (0,-1)]
+
+        def dfs(r, c, visited):
+            visited.add((r, c))
+
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+
+                if (
+                    0 <= nr < ROWS
+                    and 0 <= nc < COLS
+                    and (nr, nc) not in visited
+                    and heights[nr][nc] >= heights[r][c]
+                ):
+                    dfs(nr, nc, visited)
+
+        # Pacific (top row)
+        for c in range(COLS):
+            dfs(0, c, pacific)
+
+        # Pacific (left column)
+        for r in range(ROWS):
+            dfs(r, 0, pacific)
+
+        # Atlantic (bottom row)
+        for c in range(COLS):
+            dfs(ROWS - 1, c, atlantic)
+
+        # Atlantic (right column)
+        for r in range(ROWS):
+            dfs(r, COLS - 1, atlantic)
+
+        ans = []
+
+        for r in range(ROWS):
+            for c in range(COLS):
+                if (r, c) in pacific and (r, c) in atlantic:
+                    ans.append([r, c])
+
+        return ans
